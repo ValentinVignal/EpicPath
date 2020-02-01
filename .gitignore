@@ -1,3 +1,6 @@
 # PyCharm folders
 .idea/
 .pycache/
+
+# Personnal folder
+trash/
