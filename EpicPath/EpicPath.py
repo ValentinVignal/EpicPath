@@ -10,6 +10,8 @@ class EpicPath(Path):
     This class aims to simplify high level operation with path
     """
 
+    _flavour = _windows_flavour if os.name == 'nt' else _posix_flavour
+
     @staticmethod
     def add_parts(path1, path2):
         """
