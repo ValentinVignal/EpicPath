@@ -1,16 +1,50 @@
 from pathlib import Path
-from pathlib import _windows_flavour, _posix_flavour
 import shutil
 import os
 
 
-class EpicPath(Path):
+class EpicPath:
     """
     This is a SubClass of Path from pathlib.
     This class aims to simplify high level operation with path
     """
 
-    _flavour = _windows_flavour if os.name == 'nt' else _posix_flavour
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        for i in range(len(args)):
+            if isinstance(args[i], EpicPath):
+                args[i] = args[i].str
+        args = tuple(args)
+        for k in kwargs:
+            if isinstance(kwargs[k], EpicPath):
+                kwargs[k] = kwargs[k].str
+        self.p = Path(*args, **kwargs)
+
+    # ----------------------------------------------------------------------------------------------------
+    #                           To make EpicPath like a subclass of Path
+    # ----------------------------------------------------------------------------------------------------
+    def __getattr__(self, attr):
+        return getattr(self.p, attr)
+
+    def __str__(self):
+        return str(self.p)
+
+    def __truediv__(self, p):
+        return self.p / p
+
+    def __rtruediv__(self, p):
+        return p / self.p
+
+    def __repr__(self):
+        return f"EpicPath('{self.str}')"
+
+    def __eq__(self, p):
+        p = EpicPath(p)
+        return os.path.abspath(self.str) == os.path.abspath(p.str)
+
+    # ----------------------------------------------------------------------------------------------------
+    #                                               Add
+    # ----------------------------------------------------------------------------------------------------
 
     @staticmethod
     def add_parts(path1, path2):
@@ -26,25 +60,25 @@ class EpicPath(Path):
         return total_parts
 
     def __add__(self, other):
-        """
-
-        :param other:
-        :return:
-        """
         other = EpicPath(other)
         total_parts = self.add_parts(self, other)
 
         return EpicPath(*total_parts)
 
     def __radd__(self, other):
-        """
-
-        :param other:
-        :return:
-        """
         other = EpicPath(other)
         total_parts = self.add_parts(other, self)
         return EpicPath(*total_parts)
+
+    def add(self, p):
+        """
+
+        :param p:
+        :return:
+        """
+        p2 = self + p
+        print(p2)
+        self.p = Path(p2.str)
 
     @property
     def str(self):
