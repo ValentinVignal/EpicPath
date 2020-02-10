@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import os
+from os.path import abspath
 
 
 class EpicPath:
@@ -23,6 +24,7 @@ class EpicPath:
     # ----------------------------------------------------------------------------------------------------
     #                           To make EpicPath like a subclass of Path
     # ----------------------------------------------------------------------------------------------------
+
     def __getattr__(self, attr):
         return getattr(self.p, attr)
 
@@ -30,17 +32,49 @@ class EpicPath:
         return str(self.p)
 
     def __truediv__(self, p):
-        return self.p / p
+        return EpicPath(self.p / p)
 
     def __rtruediv__(self, p):
-        return p / self.p
+        return EpicPath(p / self.p)
 
     def __repr__(self):
         return f"EpicPath('{self.str}')"
 
+    # ----------------------------------------------------------------------------------------------------
+    #                                          Comparaison
+    # ----------------------------------------------------------------------------------------------------
+
     def __eq__(self, p):
         p = EpicPath(p)
-        return os.path.abspath(self.str) == os.path.abspath(p.str)
+        return abspath(self.str) == abspath(p.str)
+
+    def __lt__(self, p):
+        """
+
+        :param p:
+        :return: self < p (p includes self)
+        """
+        p = EpicPath(p)
+        p_parts = p.abspath.parts
+        self_parts = self.abspath.parts
+        if len(p_parts) >= len(self_parts):
+            return False
+        for i in range(len(p_parts)):
+            if not p_parts[i] == self_parts[i]:
+                return False
+        return True
+
+    def __le__(self, p):
+        return self < p or self == p
+
+    def __ge__(self, p):
+        """
+
+        :param p:
+        :return: self > p
+        """
+        return not self.__le__(p)
+
 
     # ----------------------------------------------------------------------------------------------------
     #                                               Add
@@ -87,6 +121,10 @@ class EpicPath:
         :return:
         """
         return self.as_posix()
+
+    @property
+    def abspath(self):
+        return EpicPath(abspath(self.str))
 
     def mkdir(self, exist_ok=True, parents=True, *args, **kwargs):
         """
