@@ -2,8 +2,10 @@ from pathlib import Path
 import shutil
 import os
 from os.path import abspath
+import functools
 
 
+@functools.total_ordering
 class EpicPath:
     """
     This is a SubClass of Path from pathlib.
@@ -44,37 +46,30 @@ class EpicPath:
     #                                          Comparaison
     # ----------------------------------------------------------------------------------------------------
 
-    def __eq__(self, p):
-        p = EpicPath(p)
-        return abspath(self.str) == abspath(p.str)
-
-    def __lt__(self, p):
+    def __eq__(self, other):
         """
 
-        :param p:
-        :return: self < p (p includes self)
+        :param other:
+        :return: self == other
         """
-        p = EpicPath(p)
-        p_parts = p.abspath.parts
+        other = EpicPath(other)
+        return self.abspath.str == other.abspath.str
+
+    def __lt__(self, other):
+        """
+        ⚠ IT IS TRUE IS SELF IS INCLUDED IN OTHER (AS FILE/FOLDER) ⚠
+        :param other:
+        :return: self < other (other includes self)
+        """
+        other = EpicPath(other)
+        other_parts = other.abspath.parts
         self_parts = self.abspath.parts
-        if len(p_parts) >= len(self_parts):
+        if len(other_parts) >= len(self_parts):
             return False
-        for i in range(len(p_parts)):
-            if not p_parts[i] == self_parts[i]:
+        for i in range(len(other_parts)):
+            if not other_parts[i] == self_parts[i]:
                 return False
         return True
-
-    def __le__(self, p):
-        return self < p or self == p
-
-    def __ge__(self, p):
-        """
-
-        :param p:
-        :return: self > p
-        """
-        return not self.__le__(p)
-
 
     # ----------------------------------------------------------------------------------------------------
     #                                               Add
