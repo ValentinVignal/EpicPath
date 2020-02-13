@@ -21,7 +21,7 @@ class EpicPath:
         for k in kwargs:
             if isinstance(kwargs[k], EpicPath):
                 kwargs[k] = kwargs[k].str
-        self.p = Path(*args, **kwargs)
+        self._p = Path(*args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------------
     #                           To make EpicPath like a subclass of Path
@@ -34,16 +34,16 @@ class EpicPath:
         return str(self.p)
 
     def __truediv__(self, p):
-        return EpicPath(self.p / p)
+        return EpicPath(self.p / EpicPath.to_path(p))
 
     def __rtruediv__(self, p):
-        return EpicPath(p / self.p)
+        return EpicPath(EpicPath.to_path(p) / self.p)
 
     def __repr__(self):
         return f"EpicPath('{self.str}')"
 
     # ----------------------------------------------------------------------------------------------------
-    #                                          Comparaison
+    #                                          Comparison
     # ----------------------------------------------------------------------------------------------------
 
     def __eq__(self, other):
@@ -53,7 +53,7 @@ class EpicPath:
         :return: self == other
         """
         other = EpicPath(other)
-        return self.abspath.str == other.abspath.str
+        return self.abs.str == other.abs.str
 
     def __lt__(self, other):
         """
@@ -62,8 +62,8 @@ class EpicPath:
         :return: self < other (other includes self)
         """
         other = EpicPath(other)
-        other_parts = other.abspath.parts
-        self_parts = self.abspath.parts
+        other_parts = other.abs.parts
+        self_parts = self.abs.parts
         if len(other_parts) >= len(self_parts):
             return False
         for i in range(len(other_parts)):
@@ -76,6 +76,19 @@ class EpicPath:
     # ----------------------------------------------------------------------------------------------------
 
     @property
+    def p(self):
+        return self._p
+
+    @p.setter
+    def p(self, p):
+        if isinstance(p, EpicPath):
+            self._p = p.p
+        elif isinstance(p, Path):
+            self._p = p
+        else:
+            self._p = Path(str(p))
+
+    @property
     def str(self):
         """
         Because it is soooooooo long to write As_poSiX if the coooode
@@ -84,7 +97,7 @@ class EpicPath:
         return self.as_posix()
 
     @property
-    def abspath(self):
+    def abs(self):
         return EpicPath(abspath(self.str))
 
     # ----------------------------------------------------------------------------------------------------
@@ -118,12 +131,59 @@ class EpicPath:
     def add(self, p):
         """
 
-        :param p:
+        :param p: Can be a list of string or just a string/path
         :return:
         """
-        p2 = self + p
-        print(p2)
-        self.p = Path(p2.str)
+        if not isinstance(p, list):
+            p = [p]
+        for p_ in p:
+            self.p = self + EpicPath(p_)
+
+    def __iadd__(self, other):
+        """
+
+        :param other:
+        self += other
+        """
+        self.p = (self + other).p
+        return self
+
+    # ----------------------------------------------------------------------------------------------------
+    #                                       Append and extend
+    # ----------------------------------------------------------------------------------------------------
+
+    # This is the inplace function for p1 / p2
+
+    def append(self, p):
+        """
+
+        :param p:
+
+        self /= p
+        """
+        self.p = (self / p).p
+
+    def __idiv__(self, other):
+        """
+
+        :param other:
+
+        self /= p
+        """
+        self.p = (self / other).p
+        return self
+
+    def extend(self, p_list):
+        """
+
+        :param p_list: List()
+
+        self /= p1 / p2 / p3
+        """
+        if not isinstance(p_list, list):
+            p_list = [p_list]
+        for p in p_list:
+            self.append(p)
 
     # ----------------------------------------------------------------------------------------------------
     #                                       Create and delete
@@ -168,5 +228,22 @@ class EpicPath:
             else:
                 self.unlink()
 
+    # ----------------------------------------------------------------------------------------------------
+    #                                       Static methods
+    # ----------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def to_path(p):
+        """
+
+        :param p:
+        :return: Path(p)
+        """
+        if isinstance(p, EpicPath):
+            return p.p
+        elif isinstance(p, Path):
+            return p
+        else:
+            return Path(str(p))
 
 
