@@ -33,11 +33,38 @@ class EpicPath:
     def __str__(self):
         return str(self.p)
 
-    def __truediv__(self, p):
-        return EpicPath(self.p / EpicPath.to_path(p))
+    def __truediv__(self, other):
+        """
 
-    def __rtruediv__(self, p):
-        return EpicPath(EpicPath.to_path(p) / self.p)
+        :param other:
+        :return:  self / other
+        """
+        return EpicPath(self.p / EpicPath.to_path(other))
+
+    def __rtruediv__(self, other):
+        """
+        ⚠ IT WON T WORK WITH A PATH ⚠
+        -> User floordiv instead <-
+        :param other:
+        :return: other / self
+        """
+        return EpicPath(EpicPath.to_path(other) / self.p)
+
+    def __floordiv__(self, other):
+        """
+
+        :param other:
+        :return:  self / other
+        """
+        return EpicPath(self.p / EpicPath.to_path(other))
+
+    def __rfloordiv__(self, other):
+        """
+
+        :param other:
+        :return: other // self = other / self (but works with Path)
+        """
+        return EpicPath(EpicPath.to_path(other) / self.p)
 
     def __repr__(self):
         return f"EpicPath('{self.str}')"
@@ -173,17 +200,21 @@ class EpicPath:
         self.p = (self / other).p
         return self
 
-    def extend(self, p_list):
+    def extend(self, *args):
         """
 
-        :param p_list: List()
+        :param args: args[0]: Can be a List()
 
         self /= p1 / p2 / p3
         """
-        if not isinstance(p_list, list):
-            p_list = [p_list]
-        for p in p_list:
-            self.append(p)
+        if len(args) > 0:
+            p_list = args[0]
+            if not isinstance(p_list, list):
+                p_list = [p_list]
+            for p in p_list:
+                self.append(p)
+            for p in args[1:]:
+                self.append(p)
 
     # ----------------------------------------------------------------------------------------------------
     #                                       Create and delete
@@ -246,4 +277,10 @@ class EpicPath:
         else:
             return Path(str(p))
 
+
+if __name__ == '__main__':
+
+    p = Path('a', 'b')
+    ep = EpicPath('y', 'z')
+    p_ep = p / ep
 
