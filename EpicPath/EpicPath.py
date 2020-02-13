@@ -72,6 +72,22 @@ class EpicPath:
         return True
 
     # ----------------------------------------------------------------------------------------------------
+    #                                               Properties
+    # ----------------------------------------------------------------------------------------------------
+
+    @property
+    def str(self):
+        """
+        Because it is soooooooo long to write As_poSiX if the coooode
+        :return:
+        """
+        return self.as_posix()
+
+    @property
+    def abspath(self):
+        return EpicPath(abspath(self.str))
+
+    # ----------------------------------------------------------------------------------------------------
     #                                               Add
     # ----------------------------------------------------------------------------------------------------
 
@@ -109,17 +125,9 @@ class EpicPath:
         print(p2)
         self.p = Path(p2.str)
 
-    @property
-    def str(self):
-        """
-        Because it is soooooooo long to write As_poSiX if the coooode
-        :return:
-        """
-        return self.as_posix()
-
-    @property
-    def abspath(self):
-        return EpicPath(abspath(self.str))
+    # ----------------------------------------------------------------------------------------------------
+    #                                       Create and delete
+    # ----------------------------------------------------------------------------------------------------
 
     def mkdir(self, exist_ok=True, parents=True, *args, **kwargs):
         """
