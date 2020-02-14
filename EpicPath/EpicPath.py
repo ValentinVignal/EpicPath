@@ -6,7 +6,7 @@ import functools
 
 
 @functools.total_ordering
-class EpicPath:
+class EpicPath(os.PathLike):
     """
     This is a SubClass of Path from pathlib.
     This class aims to simplify high level operation with path
@@ -22,6 +22,13 @@ class EpicPath:
             if isinstance(kwargs[k], EpicPath):
                 kwargs[k] = kwargs[k].str
         self._p = Path(*args, **kwargs)
+
+    # ----------------------------------------------------------------------------------------------------
+    #                           To make EpicPath a subclass of os.PathLike
+    # ----------------------------------------------------------------------------------------------------
+
+    def __fspath__(self):
+        return os.fspath(self.p)
 
     # ----------------------------------------------------------------------------------------------------
     #                           To make EpicPath like a subclass of Path
@@ -127,6 +134,20 @@ class EpicPath:
     def abs(self):
         return EpicPath(abspath(self.str))
 
+    @property
+    def parent(self):
+        return EpicPath(self.p.parent)
+
+    @property
+    def parents(self):
+        parents_ = self.p.parents
+        parents_ = [EpicPath(p) for p in parents_]
+        return tuple(parents_)
+
+    @property
+    def path(self):
+        return self.p
+
     # ----------------------------------------------------------------------------------------------------
     #                                               Add
     # ----------------------------------------------------------------------------------------------------
@@ -229,7 +250,7 @@ class EpicPath:
         :param kwargs:
         :return:
         """
-        super(EpicPath, self).mkdir(exist_ok=exist_ok, parents=parents, *args, **kwargs)
+        self.p.mkdir(exist_ok=exist_ok, parents=parents, *args, **kwargs)
 
     def rmdir(self, missing_ok=True):
         """
@@ -241,7 +262,7 @@ class EpicPath:
         if missing_ok and not self.exists():
             pass
         else:
-            super(EpicPath, self).rmdir()
+            self.p.rmdir()
 
     def rm(self, missing_ok=True):
         """
