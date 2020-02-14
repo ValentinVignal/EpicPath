@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, WindowsPath, PosixPath
 import shutil
 import os
 from os.path import abspath
@@ -15,11 +15,11 @@ class EpicPath(os.PathLike):
     def __init__(self, *args, **kwargs):
         args = list(args)
         for i in range(len(args)):
-            if isinstance(args[i], EpicPath):
+            if type(args[i]) is EpicPath:
                 args[i] = args[i].str
         args = tuple(args)
         for k in kwargs:
-            if isinstance(kwargs[k], EpicPath):
+            if type(kwargs[k]) is EpicPath:
                 kwargs[k] = kwargs[k].str
         self._p = Path(*args, **kwargs)
 
@@ -50,7 +50,7 @@ class EpicPath(os.PathLike):
 
     def __rtruediv__(self, other):
         """
-        ⚠ IT WON T WORK WITH A PATH ⚠
+        ⚠ IT WON T WORK WITH A PATH ⚠, it will return a Path
         -> User floordiv instead <-
         :param other:
         :return: other / self
@@ -115,9 +115,9 @@ class EpicPath(os.PathLike):
 
     @p.setter
     def p(self, p):
-        if isinstance(p, EpicPath):
+        if type(p) is EpicPath:
             self._p = p.p
-        elif isinstance(p, Path):
+        elif type(p) in [Path, WindowsPath, PosixPath]:
             self._p = p
         else:
             self._p = Path(str(p))
@@ -279,6 +279,67 @@ class EpicPath(os.PathLike):
                 shutil.rmtree(self)
             else:
                 self.unlink()
+
+    # ----------------------------------------------------------------------------------------------------
+    #                                       Suffixes
+    # ----------------------------------------------------------------------------------------------------
+
+    @property
+    def rstem(self):
+        """
+        Same as stem but without any suffixes
+
+        epic_path = EpicPath('a', 'b', 'c.txt.zip')
+        epic_path.name -> 'c.txt.zip'
+        epic_path.stem -> 'c.txt'
+        epic_path.rstem -> 'c'
+        :return: The name without any suffix
+        """
+        p = self.name       # string
+        for i in range(len(self.suffixes)):
+            p = EpicPath(p).stem        # string
+        return p    # string
+
+    def rm_suffixes(self, max=None):
+        """
+
+        :param max: The max of suffixes to remove, if None it will remove everything
+        :return: Nothing
+        """
+        if max is None or max >= len(self.suffixes):
+            self.p = self.p.parent / self.rstem
+        else:
+            p = self.name  # String
+            for i in range(max):
+                p = EpicPath(p).stem
+            self.p = self.p.parent / p
+
+    def get_unique(self, ext='_{0}', always_ext=False):
+        """
+
+        :param ext: the extension to get it unique
+        :param always_ext: even though the path doesn't exist already, the extension is added
+        :return: The path that doesn't exist
+        """
+        if not self.exists() and not always_ext:
+            return self
+        else:
+            i = 0
+            parent = self.parent
+            name = self.rstem + ext + ''.join(self.suffixes)
+            while (parent / name.format(i)).exists():
+                i += 1
+            return parent / name.format(i)
+
+    def be_unique(self, *args, **kwargs):
+        """
+        Auto affect to itself the value return by the method get_unique()
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        self.p = self.get_unique(*args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------------
     #                                       Static methods
