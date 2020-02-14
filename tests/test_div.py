@@ -1,11 +1,11 @@
 import unittest
-from EpicPath import EpicPath as EP
+from epicpath import EpicPath as EP
 from pathlib import Path
 
 
 class Div(unittest.TestCase):
     """
-    Tests the library EpicPath
+    Tests the library epicpath
     """
 
     # --------------------------------------------------------------------------------

@@ -24,14 +24,14 @@ class EpicPath(os.PathLike):
         self._p = Path(*args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------------
-    #                           To make EpicPath a subclass of os.PathLike
+    #                           To make epicpath a subclass of os.PathLike
     # ----------------------------------------------------------------------------------------------------
 
     def __fspath__(self):
         return os.fspath(self.p)
 
     # ----------------------------------------------------------------------------------------------------
-    #                           To make EpicPath like a subclass of Path
+    #                           To make epicpath like a subclass of Path
     # ----------------------------------------------------------------------------------------------------
 
     def __getattr__(self, attr):
