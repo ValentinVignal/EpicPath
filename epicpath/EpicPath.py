@@ -86,8 +86,13 @@ class EpicPath(os.PathLike):
         :param other:
         :return: self == other
         """
-        other = EpicPath(other)
-        return self.abs.str == other.abs.str
+        print('type other', type(other))
+        if type(other) in [EpicPath, Path]:
+            other = EpicPath(other)
+        if type(other) is EpicPath:
+            return self.abs.str == other.abs.str
+        else:
+            return other == self.p
 
     def __lt__(self, other):
         """
@@ -352,9 +357,9 @@ class EpicPath(os.PathLike):
         :param p:
         :return: Path(p)
         """
-        if isinstance(p, EpicPath):
+        if type(p) == EpicPath:
             return p.p
-        elif isinstance(p, Path):
+        elif type(p) == Path:
             return p
         else:
             return Path(str(p))
