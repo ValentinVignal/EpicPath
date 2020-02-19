@@ -35,7 +35,8 @@ class EpicPath(os.PathLike):
     # ----------------------------------------------------------------------------------------------------
 
     def __getattr__(self, attr):
-        return getattr(self.p, attr)
+        p = object.__getattribute__(self, '_p')
+        return getattr(p, attr)
 
     def __str__(self):
         return str(self.p)
@@ -126,6 +127,14 @@ class EpicPath(os.PathLike):
             self._p = p
         else:
             self._p = Path(str(p))
+
+    @property
+    def path(self):
+        return self.p
+
+    @path.setter
+    def path(self, p):
+        self.p = p
 
     @property
     def str(self):
