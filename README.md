@@ -46,9 +46,11 @@ path2 = path / 'f3'             # EpicPath('f1/f2/f3')
 path2 += '_0'                   # EpicPath('f1/f2/f3_0')
 ```
 
+[See the documentation](doc/README.md)   
+
 # :warning: Warnings :warning:
 
-Because `Path` is build-in Python library, some other library
+Because `Path` is build-in Python libraries, some other library
 (like [PIL](https://github.com/python-pillow/Pillow) or [skopt](https://github.com/scikit-optimize/scikit-optimize))
 can have a specific behavior when the given filename is a `str` or a `Path` object.
 Unfortunately, they don't support an `EpicPath` object ... :cry: But no worries, it is still possible to give an `EpicPath` object as a `Path` object or a `str` object using the properties `.path` and `.str`:
