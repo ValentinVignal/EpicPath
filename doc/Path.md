@@ -231,6 +231,7 @@ If parents is false, a missing parent raises FileNotFoundError.
 If exist_ok is false, FileExistsError is raised if the target directory already exists.
 
 If exist_ok is true (the default), FileExistsError exceptions will be ignored (same behavior as the POSIX mkdir -p command), but only if the last path component is not an existing non-directory file.
+
 **`Path.rename(target)`**
 
 Rename this file or directory to the given *target*, and return a new EpicPath instance pointing to *target*. On Unix, if target exists and is a file, it will be replaced silently if the user has permission. *target* can be either a string, a Path object or another EpicPath object
