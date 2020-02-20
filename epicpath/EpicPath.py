@@ -30,6 +30,9 @@ class EpicPath(os.PathLike):
     def __fspath__(self):
         return os.fspath(self.p)
 
+    def __bytes__(self):
+        return bytes(self.p)
+
     # ----------------------------------------------------------------------------------------------------
     #                           To make epicpath like a subclass of Path
     # ----------------------------------------------------------------------------------------------------
@@ -75,7 +78,31 @@ class EpicPath(os.PathLike):
         return EpicPath(EpicPath.to_path(other) / self.p)
 
     def __repr__(self):
-        return f"EpicPath('{self.str}')"
+        return f"EpicPath('{self.as_posix()}')"
+
+    def resolve(self):
+        return EpicPath(self.p.resolve())
+
+    def with_name(self, name):
+        p = None
+        has_value_error = False
+        try:
+            p = EpicPath(self.p.with_name(name))
+        except ValueError as err:
+            # raise ValueError(f'{self.__repr__()} has an empty name')
+            has_value_error = True
+        if has_value_error:
+            raise ValueError(f'{self.__repr__()} has an empty name')
+        if p is not None:
+            return p
+
+    def with_suffix(self, suffix):
+        return EpicPath(self.p.with_suffix(suffix))
+
+    def rename(self, target):
+        if type(target) == EpicPath:
+            target = target.path
+        return EpicPath(self.p.rename(target=target))
 
     # ----------------------------------------------------------------------------------------------------
     #                                          Comparison
@@ -140,9 +167,10 @@ class EpicPath(os.PathLike):
     def str(self):
         """
         Because it is soooooooo long to write As_poSiX if the coooode
+        Or it can be boring to right str(path)
         :return:
         """
-        return self.as_posix()
+        return str(self.p)
 
     @property
     def abs(self):
@@ -293,6 +321,20 @@ class EpicPath(os.PathLike):
                 shutil.rmtree(self)
             else:
                 self.unlink()
+
+    def unlink(self, missing_ok=True):
+        """
+
+        :param target:
+        :param missing_ok:
+        :return:
+        """
+        if self.exists() or not missing_ok:
+            self.p.unlink()
+
+
+
+
 
     # ----------------------------------------------------------------------------------------------------
     #                                       Suffixes
