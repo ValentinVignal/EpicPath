@@ -21,6 +21,7 @@ from epicpath import Path   # Path class
 # Path funcionalities
 
 [See the pathlib documention](https://docs.python.org/3/library/pathlib.html)
+
 [Example with EpicPath](Path.md)
 
 # EpicPath functionalities
