@@ -46,7 +46,7 @@ path2 = path / 'f3'             # EpicPath('f1/f2/f3')
 path2 += '_0'                   # EpicPath('f1/f2/f3_0')
 ```
 
-# :warning: Warnings :warnings:
+# :warning: Warnings :warning:
 
 Because `Path` is build-in Python library, some other library
 (like [PIL](https://github.com/python-pillow/Pillow) or [skopt](https://github.com/scikit-optimize/scikit-optimize))
@@ -56,8 +56,8 @@ Unfortunately, they don't support an `EpicPath` object ... :cry: But no worries,
 ```python
 path = EPath('f1', 'f2')        # EpicPath('f1/f2')
 
-weird_function(path.path)       # Give Path('f1/f2') to the function
-weird_function(path.str)        # Give the string 'f1/f2' to the function
+weird_function(path.path)       # Gives Path('f1/f2') to the function
+weird_function(path.str)        # Gives the string 'f1/f2' to the function
 ```
 
  
