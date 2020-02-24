@@ -161,7 +161,7 @@ If `exist_ok=False` and the folder already exists, it raises an error.
 
 If the parents of the folde doesn't exists already, it creates them, unless the parameters `parents=False`, it then raises an error.
 
-**.rmdir(missing_ok=True)`**
+**`.rmdir(missing_ok=True)`**
 
 The method `.rmdir` remove the directory with the path represented by the `EpicPath` object. This folder needs to be empty
 
