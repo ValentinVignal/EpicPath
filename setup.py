@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='epic-path',
-    version='0.0.5',
+    version='0.0.6',
     url='https://github.com/ValentinVignal/EpicPath.git',
     license='MIT',
     author='Valentin Vignal',

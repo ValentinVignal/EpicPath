@@ -102,7 +102,8 @@ class EpicPath(os.PathLike):
     def rename(self, target):
         if type(target) == EpicPath:
             target = target.path
-        return EpicPath(self.p.rename(target=target))
+        self.p.rename(target=target)
+        return EpicPath(target)
 
     # ----------------------------------------------------------------------------------------------------
     #                                          Comparison
