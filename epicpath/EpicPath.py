@@ -12,6 +12,12 @@ class EpicPath(os.PathLike):
     This class aims to simplify high level operation with path
     """
 
+    _string_aliases = dict(
+        epic=['epic', 'ep', 'epath', 'e-path', 'epicpath', 'epic-path'],
+        path=['path', 'p'],
+        str=['str', 's', 'string']
+    )
+
     def __init__(self, *args, **kwargs):
         args = list(args)
         for i in range(len(args)):
@@ -398,6 +404,24 @@ class EpicPath(os.PathLike):
         """
         self.p = self.get_unique(*args, **kwargs)
 
+    def listdir(self, t=None, concat=False):
+        """
+
+        :param t: the type in a string
+        :param concat: if set to true: return [self / p] instead of [p]
+        :return:
+        """
+        t = self._to_str_code(t)
+        listed_dir = [EpicPath(p) for p in os.listdir(self.p)]
+        if concat:
+            listed_dir = [self / p for p in listed_dir]
+        if t == 'epic':
+            return listed_dir
+        elif t == 'path':
+            return [p.path for p in listed_dir]
+        elif t == 'str':
+            return [p.str for p in listed_dir]
+
     # ----------------------------------------------------------------------------------------------------
     #                                       Static methods
     # ----------------------------------------------------------------------------------------------------
@@ -415,6 +439,55 @@ class EpicPath(os.PathLike):
             return p
         else:
             return Path(str(p))
+
+    @staticmethod
+    def is_epic(obj):
+        """
+
+        :param obj:
+        :return:
+        """
+        return obj is EpicPath
+
+    @staticmethod
+    def is_epic_inst(obj):
+        """
+
+        :param obj:
+        :return:
+        """
+        return isinstance(obj, EpicPath)
+
+    @staticmethod
+    def _is_acceptable_path(path):
+        """
+
+        :param obj:
+        :return:
+        """
+        return EpicPath.is_epic_inst(path) or isinstance(path, Path) or isinstance(path, str)
+
+    @staticmethod
+    def _to_str_code(t):
+        """
+
+        :param t:
+        :return:
+        """
+        if t is None or EpicPath.is_epic(t):
+            return 'epic'
+        elif t is Path:
+            return 'path'
+        elif t is str:
+            return 'str'
+        elif isinstance(t, str):
+            t = t.lower()
+            for k in EpicPath._string_aliases:
+                if t in EpicPath._string_aliases[k]:
+                    return k
+            raise ValueError(f'Unknown string input: {t}')
+        else:
+            raise TypeError(f'Unknown type : {t.__name__} ')
 
 
 if __name__ == '__main__':
