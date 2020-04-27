@@ -6,11 +6,11 @@ This class aims to simplify high level operations with path
 
 # Context and history
 
-I'm a Computing Student tired of creating again and again the same functions through all my projects to do the exact same thing... :tired_face: 
+I'm a Computing Student tired of creating again and again the same functions through all my projects to do the exact same things... :tired_face: 
 Indeed, in every of my projects I create files, delete them, create folders and delete them *blablabla* ...
-To solve this boring problem, I decided to create my own library that I can create one and only one time to use and reuse as many time as I wish to.
+To solve this boring problem, I decided to create my own library that I can create one and only one time to use and reuse as many times as I wish to.
 And because I'm trying to be nice to this cruel world I share this *Epic* project with all of you :heart:
-So feel free to download, use and give feedback about this ***epic***  creation. :+1:
+So feel free to download it, use it and give feedback about this ***epic***  creation. :+1:
 
 
 # Description

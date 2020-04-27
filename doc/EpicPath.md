@@ -94,7 +94,7 @@ EpicPath('a/b/c/d/e/f/g/h/i/j/k/l')
 
 ## Add string to the path
 
-`EpicPath` also support the `+` operator:
+`EpicPath` also supports the `+` operator:
 
 ```python
 >>> p1 = EPath('a', 'b')
@@ -238,3 +238,73 @@ This is the in place version of the method `.get_unique()`:
 >>> p1
 EpicPath('text_1.txt')
 ```
+
+# Get context information
+
+**`.listdir(t='epicpath', concat=False)`**
+
+The method `listdir(t='epicpath', concat=False)` lists all the files and folder in a directory
+- The parameter `t` allows you to choose what type you want in the output list (`'epicpath'` (default) for `EpicPath`, `'path'` for `Path` and `'str'` for `str`)
+- The parameter `concat=False` can be set to `True` to automatically include the current folder path in the output.
+
+```python
+>>> p = EPath('a')
+
+>>> p.listdir()
+[EpicPath('b'), EpicPath('setup.py'), EpicPath('file.txt')]
+>>> p.listdir(t='path')
+[WindowsPath('b'), WindowsPath('setup.py'), WindowsPath('file.txt')]
+>>> p.listdir(t='str')
+['b', 'setup.py', 'file.txt']
+
+>>> p.listdir(concat=True)
+[EpicPath('a/b'), EpicPath('a/setup.py'), EpicPath('a/file.txt')]
+
+```
+
+**`.walk(t='epic')`**
+
+This method yields a generator as the function `os.walk`. The returned types are `EpicPath` for `t='epic'` (default), `Path` for `t='path'` and `str` for `t='str'`.
+
+```python
+>>> path = EPath('a')
+>>> for p in path.walk():
+    ... print(p)
+(EpicPath('a'), [EpicPath('b')], [EpicPath('setup.py'), EpicPath('file.txt')])
+(EpicPath('a/b'), [], [EpicPath('help.txt')])
+>>> for p in path.walk(t='path'):
+    ... print(p)
+(WindowsPath('a'), [WindowsPath('b')], [WindowsPath('setup.py'), WindowsPath('file.txt')])
+(WindowsPath('a/b'), [], [WindowsPath('help.txt')])
+>>> for p in path.walk(t='str'):
+    ... print(p)
+('a', ['b'], ['setup.py', 'file.txt'])
+('a/b', [], ['help.txt'])
+```
+
+**`.walkfiles(t='epic')`**
+
+This method will return all the files encountered in a `.walk()` process.
+The returned types are `EpicPath` for `t='epic'` (default), `Path` for `t='path'` and `str` for `t='str'`.
+
+```python
+>>> path = EPath('a')
+>>> for p in path.walkfiles():
+    ... print(p)
+setup.py    # EpicPath object
+file.txt    # EpicPath object
+help.txt    # EpicPath object
+>>> for p in path.walkfiles(t='path'):
+    ... print(p)
+setup.py    # WindowsPath object
+file.txt    # WindowsPath object
+help.txt    # WindowsPath object
+>>> for p in path.walkfiles(t='str'):
+    ... print(p)
+setup.py    # string object
+file.txt    # string object
+help.txt    # string object
+```
+
+
+

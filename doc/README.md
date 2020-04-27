@@ -5,7 +5,7 @@
 from epicpath import EpicPath as EPath
 ```
 
-I actually already created some aliases for you, so you can do all the fallowing import to get the same object:
+I actually already created some aliases for you, so you can do all the fallowing imports to get the same object:
 
 ```python
 from epicpath import EpicPath       # All these 3 imports are the same objects
