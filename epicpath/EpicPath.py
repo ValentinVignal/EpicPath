@@ -422,6 +422,47 @@ class EpicPath(os.PathLike):
         elif t == 'str':
             return [p.str for p in listed_dir]
 
+    def walk(self, t=None):
+        """
+        Performs a os.walk with the selected type
+        :param t: type in a string
+        :return:
+        """
+        t = self._to_str_code(t)
+        generator = os.walk(self.p)
+        if t == 'str':
+            for res in generator:
+                yield res
+        else:
+            c = None
+            if t == 'epic':
+                c = EpicPath
+            elif t == 'path':
+                c = Path
+            if c is not None:
+                for root, directories, files in generator:
+                    root = c(root)
+                    directories = [c(d) for d in directories]
+                    files = [c(f) for f in files]
+                    yield root, directories, files
+
+    def walkfiles(self, t=None):
+        """
+
+        :param t:
+        :return:
+        """
+        t = self._to_str_code(t)
+        for root, directories, files in self.walk():
+            for filename in files:
+                filepath = root / filename
+                if t == 'epic':
+                    yield filepath
+                elif t == 'path':
+                    yield filepath.path
+                elif t == 'str':
+                    yield filepath.str
+
     # ----------------------------------------------------------------------------------------------------
     #                                       Static methods
     # ----------------------------------------------------------------------------------------------------
