@@ -135,4 +135,5 @@ dmypy.json
 
 trash/
 help/
+setup.py
 
