@@ -121,7 +121,6 @@ class EpicPath(os.PathLike):
         :param other:
         :return: self == other
         """
-        print('type other', type(other))
         if type(other) in [EpicPath, Path]:
             other = EpicPath(other)
         if type(other) is EpicPath:
